@@ -1,0 +1,65 @@
+{
+  "name": "@washedguy/kleinanzeigen-mcp",
+  "version": "0.1.0",
+  "description": "Unofficial community MCP server for kleinanzeigen.de: user-directed search, saved searches, inbox and messaging through a local browser session.",
+  "license": "MIT",
+  "author": "washedguy",
+  "type": "module",
+  "bin": {
+    "kleinanzeigen-mcp": "dist/index.js",
+    "kleinanzeigen-mcp-login": "dist/login.js",
+    "kleinanzeigen-mcp-debug": "dist/debug-capture.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "kleinanzeigen",
+    "scraper",
+    "automation",
+    "patchright"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/washedguy/kleinanzeigen-mcp.git"
+  },
+  "homepage": "https://github.com/washedguy/kleinanzeigen-mcp#readme",
+  "bugs": {
+    "url": "https://github.com/washedguy/kleinanzeigen-mcp/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "login": "tsx src/login.ts",
+    "debug": "tsx src/debug-capture.ts",
+    "test": "tsx --test test/*.test.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "biome lint .",
+    "format": "biome format --write .",
+    "check": "biome check --write .",
+    "verify": "npm run typecheck && npm run lint && npm test",
+    "prepublishOnly": "npm run verify && npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "patchright": "^1.63.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.7.0"
+  }
+}
