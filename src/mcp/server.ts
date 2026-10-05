@@ -13,11 +13,12 @@ export function createServer(): McpServer {
     { name: SERVER_NAME, version: SERVER_VERSION },
     {
       instructions:
-        "Unofficial, read-only MCP server for public kleinanzeigen.de listings. " +
-        "search_listings searches listings (query, location, radiusKm, minPrice, " +
-        "maxPrice, sort, maxPages); get_listing reads a single listing by id or url. " +
-        "It never logs in, never touches any account, sends no messages, and performs " +
-        "no bulk scraping. Challenges are never bypassed.",
+        "Unofficial, read-only server for public kleinanzeigen.de listings. " +
+        "Use search_listings to find listings (query; optional location, radiusKm, " +
+        "minPrice, maxPrice, sort, maxPages) and get_listing to read one listing by " +
+        "id or url. Public data only: no login, no account access, no messaging, no " +
+        "bulk scraping, no challenge bypass. On CHALLENGE_REQUIRED or RATE_LIMITED, " +
+        "retry later with fewer, slower requests.",
     },
   );
 
