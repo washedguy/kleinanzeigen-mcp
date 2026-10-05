@@ -1,6 +1,6 @@
 {
   "name": "@washedguy/kleinanzeigen-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Unofficial community MCP server for kleinanzeigen.de: user-directed search, saved searches, inbox and messaging through a local browser session.",
   "license": "MIT",
   "author": "washedguy",
