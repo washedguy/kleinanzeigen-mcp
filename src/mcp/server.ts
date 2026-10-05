@@ -1,11 +1,14 @@
+import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerListingTools } from "./tools/listings.js";
 import { registerMessageTools } from "./tools/messages.js";
 import { registerSavedSearchTools } from "./tools/saved-searches.js";
 import { registerSearchTools } from "./tools/search.js";
 
+const pkg = createRequire(import.meta.url)("../../package.json") as { version?: string };
+
 export const SERVER_NAME = "kleinanzeigen-mcp";
-export const SERVER_VERSION = "0.1.0";
+export const SERVER_VERSION = pkg.version ?? "0.0.0";
 
 export function createServer(): McpServer {
   const server = new McpServer(
