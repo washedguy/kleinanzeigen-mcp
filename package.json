@@ -1,13 +1,12 @@
 {
   "name": "@washedguy/kleinanzeigen-mcp",
-  "version": "0.1.2",
-  "description": "Unofficial community MCP server for kleinanzeigen.de: user-directed search, saved searches, inbox and messaging through a local browser session.",
+  "version": "0.2.0",
+  "description": "Unofficial, read-only community MCP server for public kleinanzeigen.de listings: search and read listings through a local browser session. No login, no messaging.",
   "license": "MIT",
   "author": "washedguy",
   "type": "module",
   "bin": {
     "kleinanzeigen-mcp": "dist/index.js",
-    "kleinanzeigen-mcp-login": "dist/login.js",
     "kleinanzeigen-mcp-debug": "dist/debug-capture.js"
   },
   "files": [
@@ -41,7 +40,6 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
-    "login": "tsx src/login.ts",
     "debug": "tsx src/debug-capture.ts",
     "test": "tsx --test test/*.test.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",

@@ -1,8 +1,7 @@
 import fs from "node:fs";
-import { type BrowserContext, chromium, type Page } from "patchright";
+import { type Browser, type BrowserContext, chromium, type Page } from "patchright";
 import { NavigationError } from "../utils/errors.js";
 import { logger } from "../utils/logger.js";
-import { getBrowserProfileDir } from "../utils/paths.js";
 
 export interface StartOptions {
   headless?: boolean;
@@ -43,11 +42,12 @@ function resolveChannel(): string | undefined {
 }
 
 /**
- * Central Playwright abstraction. Owns a single persistent browser context so
- * cookies, localStorage and the login session survive between MCP calls and
- * between server restarts via the on-disk profile.
+ * Central Patchright abstraction. Lazily starts a single headless browser and
+ * reuses one page for all calls. No profile or session is persisted: this server
+ * only reads public pages.
  */
 export class KleinanzeigenBrowser {
+  private browserInstance: Browser | null = null;
   private context: BrowserContext | null = null;
   private page: Page | null = null;
   private starting: Promise<void> | null = null;
@@ -62,31 +62,28 @@ export class KleinanzeigenBrowser {
   }
 
   private async doStart(options: StartOptions): Promise<void> {
-    const userDataDir = getBrowserProfileDir();
-    fs.mkdirSync(userDataDir, { recursive: true, mode: 0o700 });
     const headless = options.headless ?? envHeadless();
     const channel = resolveChannel();
     try {
-      this.context = await chromium.launchPersistentContext(userDataDir, {
+      this.browserInstance = await chromium.launch({
         headless,
+        ...(channel ? { channel } : {}),
+      });
+      this.context = await this.browserInstance.newContext({
         viewport: { width: 1366, height: 900 },
         locale: "de-DE",
         timezoneId: "Europe/Berlin",
         acceptDownloads: false,
-        ...(channel ? { channel } : {}),
       });
     } catch (err) {
+      await this.browserInstance?.close().catch(() => undefined);
+      this.browserInstance = null;
       this.context = null;
       const message = err instanceof Error ? err.message : String(err);
-      throw new NavigationError(
-        `Could not start Chromium with profile "${userDataDir}". ` +
-          "If another Kleinanzeigen MCP process or the login browser is running, close it first. " +
-          `(${message.slice(0, 200)})`,
-      );
+      throw new NavigationError(`Could not start Chromium. (${message.slice(0, 200)})`);
     }
     this.context.setDefaultTimeout(20_000);
-    const pages = this.context.pages();
-    this.page = pages[0] ?? (await this.context.newPage());
+    this.page = await this.context.newPage();
     logger.info("browser started", { headless, channel: channel ?? "bundled-chromium" });
   }
 
@@ -98,17 +95,18 @@ export class KleinanzeigenBrowser {
     return this.page;
   }
 
-  /** The persistent context, once started. Used by the debug capture mode. */
+  /** The browser context, once started. Used by the debug capture mode. */
   getContext(): BrowserContext | null {
     return this.context;
   }
 
   async stop(): Promise<void> {
-    const context = this.context;
+    const instance = this.browserInstance;
+    this.browserInstance = null;
     this.context = null;
     this.page = null;
-    if (context) {
-      await context.close().catch(() => undefined);
+    if (instance) {
+      await instance.close().catch(() => undefined);
       logger.info("browser stopped");
     }
   }

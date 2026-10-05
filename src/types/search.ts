@@ -12,13 +12,3 @@ export interface SearchListingsInput {
   /** Internal: max number of results to collect. Not exposed to the MCP client. */
   limit?: number;
 }
-
-/** A saved search ("Suchauftrag"). */
-export interface SavedSearch {
-  id: string;
-  name?: string;
-  query?: string;
-  url: string;
-  isNew?: boolean;
-  lastResultAt?: string;
-}

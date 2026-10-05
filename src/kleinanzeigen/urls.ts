@@ -1,13 +1,5 @@
 export const BASE_URL = "https://www.kleinanzeigen.de";
 
-export const LOGIN_PATH = "/m-einloggen.html";
-export const INBOX_PATH = "/m-nachrichten.html";
-export const SAVED_SEARCHES_PATH = "/m-meine-suchen.html";
-
-export const LOGIN_URL = `${BASE_URL}${LOGIN_PATH}`;
-export const INBOX_URL = `${BASE_URL}${INBOX_PATH}`;
-export const SAVED_SEARCHES_URL = `${BASE_URL}${SAVED_SEARCHES_PATH}`;
-
 export function absoluteUrl(hrefOrPath: string): string {
   if (!hrefOrPath) return BASE_URL;
   if (/^https?:\/\//i.test(hrefOrPath)) return hrefOrPath;

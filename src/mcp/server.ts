@@ -1,8 +1,6 @@
 import { createRequire } from "node:module";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { registerListingTools } from "./tools/listings.js";
-import { registerMessageTools } from "./tools/messages.js";
-import { registerSavedSearchTools } from "./tools/saved-searches.js";
 import { registerSearchTools } from "./tools/search.js";
 
 const pkg = createRequire(import.meta.url)("../../package.json") as { version?: string };
@@ -15,21 +13,16 @@ export function createServer(): McpServer {
     { name: SERVER_NAME, version: SERVER_VERSION },
     {
       instructions:
-        "Unofficial, user-directed MCP server for kleinanzeigen.de, acting on the " +
-        "user's own logged-in account in the local browser. Read tools " +
-        "(search_listings, get_listing, get_conversations, get_conversation, " +
-        "get_saved_searches, run_saved_search) are safe. search_listings supports " +
-        "location, radiusKm, sort and maxPages. Mutating tools (send_message, " +
-        "save_search, delete_saved_search) change the user's account and should " +
-        "require explicit user approval. The server never generates message content, " +
-        "never bypasses challenges, and performs no bulk scraping or messaging.",
+        "Unofficial, read-only MCP server for public kleinanzeigen.de listings. " +
+        "search_listings searches listings (query, location, radiusKm, minPrice, " +
+        "maxPrice, sort, maxPages); get_listing reads a single listing by id or url. " +
+        "It never logs in, never touches any account, sends no messages, and performs " +
+        "no bulk scraping. Challenges are never bypassed.",
     },
   );
 
   registerSearchTools(server);
   registerListingTools(server);
-  registerMessageTools(server);
-  registerSavedSearchTools(server);
 
   return server;
 }
