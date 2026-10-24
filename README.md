@@ -172,3 +172,7 @@ Linting and formatting use a single dev dependency
 - **IP reputation is out of scope.** If Kleinanzeigen temporarily blocks your IP
   range, wait it out and reduce request frequency.
 - Promoted listings appear above the requested sort order.
+
+## Author
+
+Built and maintained by Jan Herklotz, [washed.dev](https://washed.dev): websites and web apps from Wiesbaden.
