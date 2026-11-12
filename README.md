@@ -1,30 +1,6 @@
 # kleinanzeigen-mcp
 
-> **Unofficial project.** Not affiliated with, endorsed by, or connected to
-> Kleinanzeigen. "Kleinanzeigen" is used only to describe what the software
-> talks to. This software performs **user-directed** browser automation on
-> publicly available listings — no account, no login.
-
-A read-only [Model Context Protocol](https://modelcontextprotocol.io) server for
-public [kleinanzeigen.de](https://www.kleinanzeigen.de) listings. It lets an AI
-agent search listings and read a single listing through a local browser session.
-
-No AI, no chat UI, no cloud service, no login, no messaging.
-
-## Acceptable use
-
-The tool reads public listings, one request at a time, on behalf of a single
-person. It deliberately does **not**:
-
-- log in, create accounts, or touch any account,
-- read inboxes, send messages, or manage saved searches,
-- solve or bypass CAPTCHAs, challenges or access controls,
-- rotate proxies or spoof fingerprints to evade blocks,
-- crawl or bulk-export listings.
-
-Every action maps to one user request: one search, one listing. Searches are
-capped at 10 result pages. You are responsible for complying with the terms of
-service of any site you access through this software.
+MCP server for searching and reading Kleinanzeigen listings.
 
 ## Requirements
 
@@ -47,11 +23,7 @@ npx patchright install chromium
 npm run build
 ```
 
-The browser runtime is [Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright),
-a drop-in Playwright fork that closes Playwright's automation leaks
-(`Runtime.enable`, `navigator.webdriver`). If a real Google Chrome is installed it
-is used automatically for a more realistic fingerprint; override with
-`KLEINANZEIGEN_CHANNEL=chrome|msedge|bundled`.
+The server uses [Patchright](https://github.com/Kaliiiiiiiiii-Vinyzu/patchright). Set `KLEINANZEIGEN_CHANNEL=chrome|msedge|bundled` to select a browser.
 
 ## Configure the MCP client
 
@@ -104,29 +76,6 @@ Failures come back as small, safe payloads — never browser stack traces:
 Codes: `CHALLENGE_REQUIRED`, `NAVIGATION_ERROR`, `LISTING_NOT_FOUND`,
 `RATE_LIMITED`, `INVALID_INPUT`, `INTERNAL_ERROR`.
 
-## Examples
-
-```ts
-const { results } = await searchListings({ query: "Mac Mini M4", maxPrice: 500, sort: "price_asc" });
-const listing = await getListing({ id: results[0].id });
-```
-
-## How it works
-
-MCP and browser automation are strictly separated: the MCP layer only validates
-inputs and formats outputs, and never touches the browser.
-
-```text
-src/
-├── index.ts                 # stdio entrypoint
-├── mcp/                     # tools, schemas, response shape
-├── kleinanzeigen/           # browser session, page readers, parsing, domain models
-└── types/  utils/
-```
-
-Search results and listings are parsed from Kleinanzeigen's server-rendered HTML
-into domain models; raw HTML never reaches the MCP client.
-
 ## Debugging
 
 ```bash
@@ -157,22 +106,12 @@ npm run test       # node:test via tsx
 Linting and formatting use a single dev dependency
 ([Biome](https://biomejs.dev)); configuration is in `biome.json`.
 
-## Security
+## Notes
 
-- No login, credentials, cookies or tokens: the server only reads public pages.
-- Sessions are not persisted.
-- Challenges are never solved or bypassed: the server returns
-  `CHALLENGE_REQUIRED`.
-- No proxy rotation, no account creation, no CAPTCHA solving, no bulk scraping.
-- Logs go to stderr only (stdout is the MCP transport).
+- Searches return up to 10 pages; promoted listings can appear above the requested sort order.
+- Challenges return `CHALLENGE_REQUIRED`; try again later.
+- This is an unofficial integration and site behavior may change.
 
-## Limitations
+## License
 
-- **Read-only, public listings.** No account features.
-- **IP reputation is out of scope.** If Kleinanzeigen temporarily blocks your IP
-  range, wait it out and reduce request frequency.
-- Promoted listings appear above the requested sort order.
-
-## Author
-
-Built and maintained by Jan Herklotz, [washed.dev](https://washed.dev): websites and web apps from Wiesbaden.
+[MIT](LICENSE)
